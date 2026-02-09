@@ -69,12 +69,12 @@ public class Agent {
    */
   public static Agent create(MidsceneConfig config, PageDriver driver) {
     AIModel model = switch (config.getProvider()) {
-      case OPENAI -> new OpenAIModel(config.getApiKey(), config.getModelName());
-      case GEMINI -> new GeminiModel(config.getApiKey(), config.getModelName());
+      case OPENAI -> new OpenAIModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
+      case GEMINI -> new GeminiModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
       case ANTHROPIC -> new AnthropicModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
       case MISTRAL -> new MistralModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
       case AZURE_OPEN_AI -> new AzureOpenAiModel(config.getApiKey(), config.getBaseUrl());
-      case OLLAMA -> new OllamaModel(config.getBaseUrl(), config.getModelName());
+      case OLLAMA -> new OllamaModel(config.getBaseUrl(), config.getModelName(), config.getApiKey());
       case QWEN, THOUSAND_QUESTIONS -> new QwenModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
     };
 
@@ -91,12 +91,12 @@ public class Agent {
    */
   public static Agent create(MidsceneConfig config, PageDriver driver, TaskCache cache) {
     AIModel model = switch (config.getProvider()) {
-      case OPENAI -> new OpenAIModel(config.getApiKey(), config.getModelName());
-      case GEMINI -> new GeminiModel(config.getApiKey(), config.getModelName());
+      case OPENAI -> new OpenAIModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
+      case GEMINI -> new GeminiModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
       case ANTHROPIC -> new AnthropicModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
       case MISTRAL -> new MistralModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
       case AZURE_OPEN_AI -> new AzureOpenAiModel(config.getApiKey(), config.getBaseUrl());
-      case OLLAMA -> new OllamaModel(config.getBaseUrl(), config.getModelName());
+      case OLLAMA -> new OllamaModel(config.getBaseUrl(), config.getModelName(), config.getApiKey());
       case QWEN, THOUSAND_QUESTIONS -> new QwenModel(config.getApiKey(), config.getModelName(), config.getBaseUrl());
     };
 

@@ -13,10 +13,20 @@ public class GeminiModel implements AIModel {
   private final ChatModel model;
 
   public GeminiModel(String apiKey, String modelName) {
-    this.model = GoogleAiGeminiChatModel.builder()
-        .apiKey(apiKey)
-        .modelName(modelName)
-        .build();
+    this(apiKey, modelName, null);
+  }
+
+  public GeminiModel(String apiKey, String modelName, String baseUrl) {
+    GoogleAiGeminiChatModel.GoogleAiGeminiChatModelBuilder builder =
+        GoogleAiGeminiChatModel.builder()
+            .apiKey(apiKey)
+            .modelName(modelName);
+
+    if (baseUrl != null && !baseUrl.isEmpty()) {
+      builder.baseUrl(baseUrl);
+    }
+
+    this.model = builder.build();
   }
 
   @Override

@@ -11,10 +11,19 @@ public class OpenAIModel implements AIModel {
   private final ChatModel model;
 
   public OpenAIModel(String apiKey, String modelName) {
-    this.model = OpenAiChatModel.builder()
+    this(apiKey, modelName, null);
+  }
+
+  public OpenAIModel(String apiKey, String modelName, String baseUrl) {
+    OpenAiChatModel.OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
         .apiKey(apiKey)
-        .modelName(modelName)
-        .build();
+        .modelName(modelName);
+
+    if (baseUrl != null && !baseUrl.isEmpty()) {
+      builder.baseUrl(baseUrl);
+    }
+
+    this.model = builder.build();
   }
 
   @Override
