@@ -31,12 +31,12 @@ Add the necessary dependencies to your project's `pom.xml`:
 <dependency>
   <groupId>io.github.alstafeev</groupId>
   <artifactId>midscene-web</artifactId>
-  <version>0.1.9-SNAPSHOT</version>
+  <version>0.1.8-SNAPSHOT</version>
 </dependency>
 <dependency>
   <groupId>io.github.alstafeev</groupId>
   <artifactId>midscene-visualizer</artifactId>
-  <version>0.1.9-SNAPSHOT</version>
+  <version>0.1.8-SNAPSHOT</version>
 </dependency>
 ```
 

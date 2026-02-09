@@ -29,12 +29,12 @@
 <dependency>
   <groupId>io.github.alstafeev</groupId>
   <artifactId>midscene-web</artifactId>
-  <version>0.1.9-SNAPSHOT</version>
+  <version>0.1.8-SNAPSHOT</version>
 </dependency>
 <dependency>
   <groupId>io.github.alstafeev</groupId>
   <artifactId>midscene-visualizer</artifactId>
-  <version>0.1.9-SNAPSHOT</version>
+  <version>0.1.8-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -61,6 +61,82 @@ agent.aiAssert("价格应低于200美元");
 
 // 4. 生成报告
 Visualizer.generateReport(agent.getContext(), Paths.get("report.html"));
+```
+
+## 完整示例（Agent 模式）
+```java
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
+import com.midscene.core.agent.Agent;
+import com.midscene.core.config.MidsceneConfig;
+import com.midscene.core.config.ModelProvider;
+import com.midscene.core.context.GroupedActionDump;
+import com.midscene.visualizer.Visualizer;
+import com.midscene.web.driver.PlaywrightDriver;
+
+import java.nio.file.Paths;
+
+public class MidsceneTest {
+    public static void main(String[] args) {
+        // 0. Configure
+        // Claude Api
+        MidsceneConfig claudeConfig = MidsceneConfig.builder()
+                .provider(ModelProvider.ANTHROPIC)
+                .apiKey("your claude api key")
+                .modelName("gemini-3-flash-preview-thinking")
+                .baseUrl("https://yinli.one/v1") // 可选的自定义基础 URL
+                .timeoutMs(120000)               // AI 超时时间
+                .build();
+
+        // Ollama Api
+        MidsceneConfig ollamaConfig = MidsceneConfig.builder()
+                .provider(ModelProvider.OPENAI)
+                .apiKey("your ollama api key")
+                .modelName("gemini-3-flash-preview:cloud")
+                .baseUrl("http://localhost:11434/v1") // 可选的自定义基础 URL
+                .timeoutMs(120000)               // AI 超时时间
+                .build();
+
+        // 1. 创建 Playwright 实例
+        try (Playwright playwright = Playwright.create()) {
+            Browser browser = playwright.chromium().launch(
+                    new BrowserType.LaunchOptions().setHeadless(false)
+            );
+
+            // 2. 创建 Page（Playwright 会自动使用 PageImpl 实现）
+            Page page = browser.newPage();
+            page.setDefaultNavigationTimeout(60000);  // 设置60秒超时
+            page.navigate("https://www.sbisec.co.jp/ETGate");
+
+            // 3. 包装成 PlaywrightDriver
+            PlaywrightDriver pageDriver = new PlaywrightDriver(page);
+
+            // 4. 创建 Agent
+            Agent agent = Agent.create(ollamaConfig, pageDriver);
+
+            // 5. 使用 Agent
+            agent.aiAction("ページ上部銘柄検索の右側の入力欄に「4812」を入力する");
+
+            // 6. Generate Report（两种方式效果一样，报告没法正常查看）
+            // 方式1
+            Visualizer.generateReport(agent.getContext(), Paths.get("report1.html"));
+
+            // 方式2
+            // 创建 GroupedActionDump
+            GroupedActionDump dump = GroupedActionDump.fromContext(
+                    agent.getContext(),      // Context
+                    "SBINTest",              // 测试名称
+                    "0.1.8-SNAPSHOT"         // SDK 版本
+            );
+            // 添加模型信息（可选）
+            dump.addModelBrief(ollamaConfig.getModelName());
+            // 生成报告
+            Visualizer.generateReport(dump, Paths.get("report2.html"));
+        }
+    }
+}
 ```
 
 ## 高级功能
